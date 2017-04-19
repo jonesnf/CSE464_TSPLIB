@@ -16,18 +16,53 @@
 #include <stdio.h>
 #include <string.h>
 #include <fstream>
+//#include <array>
+#include "node.h"
 
 
 using namespace std;
 
 
-/*
- *Read file at specified path.  Change late to accept arguments when
- * running program if possible 
- * 
- */
-void read(string filename){
 
+
+
+/**
+ * 
+ * @param NULL
+ */
+NODE::NODE(){
+    num = -1;
+    xcor = -1;
+    ycor = -1;
+    
+}
+
+NODE::NODE(double number, double x, double y){
+
+    num = number;
+    xcor = x;
+    ycor = y;   
+    
+}
+
+
+void NODE::newNode(double num, double x, double y){
+    
+    NODE temp(num, x, y);
+    
+    
+    
+}
+
+
+
+/*
+ * Read file at specified path.  Change late to accept arguments when
+ * running program if possible 
+ * @param filename
+ */
+int read(string filename){
+  
     string PATH = "/home/nate/Documents/"+filename+".txt";
     cout << "Path: " << PATH << "\n";
     
@@ -63,10 +98,10 @@ void read(string filename){
     //Get nodes
     bool alreadyFound = false, start_node_gather = false, all_nodes_fnd = false;
     int foundNodeSec, count = 0;
-    while(getline(tspFile, line) && !all_nodes_fnd && count != 50){ // added count strictly for debuggin purposes
+    
+    while(getline(tspFile, line) && !all_nodes_fnd){ 
         
         char * curLine = (char *)line.c_str();
-        //cout << line << endl;
         
         if(start_node_gather){
             char * node = strtok(curLine, " \t");            
@@ -78,11 +113,16 @@ void read(string filename){
                     break;
                 }
                 
-                cout << "NODE: " <<node ;
+                //Save node #
+                //cout << "NODE: " <<node ;
                 node = strtok(NULL, " ");
-                cout << " X: " << node;
+                
+                //Save X coordinate
+                //cout << " X: " << node;
                 node = strtok(NULL, " ");
-                cout << " Y: " << node << "\n";
+                
+                //Save Y coordinate
+                //cout << " Y: " << node << "\n";
                 node = strtok(NULL, " ");
             }
         }
@@ -90,26 +130,37 @@ void read(string filename){
         if(!alreadyFound) {
            
             foundNodeSec = line.find("NODE_COORD_SECTION");
-            //(foundNodeSec != string::npos) ? start_node_gather = true : start_node_gather = false;
-            //cout << "FOUND: " << foundNodeSec << " SNG: " << start_node_gather << endl;
-            //(foundNodeSec != string::npos) ? cout << "NODECOORDSEC: "<< line << endl : start_node_gather = false;
             if(foundNodeSec != string::npos){
                 start_node_gather = true;
                 alreadyFound = true;
             }
+            
         }
         
-        //count++;
     
     }
         
-    cout << "through: " << count << endl;
-    cout << "Dimension: " << dimension;
+    cout << "Dimension: " << dimension << endl;
     
     tspFile.close();
     
+    return dimension; 
+    
 }
 
+
+/**
+ * 
+ * 
+ * @param argc
+ * @param argv
+ * @return 
+ */
+double TSP_brute(NODE *cities[]){
+    
+    
+
+}
 
 /*
  * 
@@ -118,9 +169,16 @@ int main(int argc, char** argv) {
 
     string filename = "";
     
+    NODE map;
+    
     cout << "Please enter a file name from TSPLIB to test (e.g. a280):  ";
     cin >> filename;
-    read(filename);  
+    
+    //Initializing array of nodes
+    map.num_cities =     read(filename); 
+    
+    cout << "Cities found: " << map.num_cities << "  "<< sizeof(map.cities);
+   // TSP_brute();
     
  
     return 0;
