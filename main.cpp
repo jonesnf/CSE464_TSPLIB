@@ -45,7 +45,12 @@ NODE::NODE(bool ifVisited, double x, double y){
     
 }
 
-
+/**
+ * 
+ * @param ifVisited - determines whether or not the nodes has been visited
+ * @param x -  x coordinate
+ * @param y -  y coordinate
+ */
 void NODE::newNode(bool ifVisited, double x, double y){
     
     NODE temp(ifVisited, x, y);   
@@ -59,9 +64,9 @@ void NODE::newNode(bool ifVisited, double x, double y){
 
 
 /*
- * Read file at specified path.  Change late to accept arguments when
+ * Read file at specified path.  Change later to accept different path arguments when
  * running program if possible 
- * @param filename
+ * @param filename, NODE object
  */
 int read(string filename, NODE tmp){
     
@@ -94,11 +99,10 @@ int read(string filename, NODE tmp){
         
     }
     
-    //Get nodes
+    //Identifiers for getting nodes
     bool alreadyFound = false, start_node_gather = false, all_nodes_fnd = false;
     int foundNodeSec;
     double saveX, saveY;
-    bool save_x_cor, save_y_cor;
     //NODE temp;  //for some reason it didn't like this
     
     while(getline(tspFile, line) && !all_nodes_fnd){ 
@@ -157,9 +161,8 @@ int read(string filename, NODE tmp){
 /**
  * 
  * 
- * @param argc
- * @param argv
- * @return 
+ * @param NODE object
+ * @return eventually will return brute force solution to TSP 
  */
 double TSP_brute(NODE arg){
     
@@ -183,14 +186,12 @@ int main(int argc, char** argv) {
     cout << "Please enter a file name from TSPLIB to test (e.g. a280):  ";
     cin >> filename;
     
-    //Initializing array of nodes
-    //mapOf.num_cities =     read(filename, mapOf);      
+    //Initializing array of nodes      
     mapOf.num_cities = read(filename, mapOf);
     cout << "Cities found: " << mapOf.num_cities << endl;
     
     TSP_brute(mapOf);
     
-    //cout << "Example: " << mapOf.cities[0].xcor << " " << mapOf.cities[0].ycor <<endl;
     
     delete [] mapOf.cities;
     
