@@ -31,26 +31,28 @@ using namespace std;
  * @param NULL
  */
 NODE::NODE(){
-    num = -1;
+    visited = false;
     xcor = -1;
     ycor = -1;
     
 }
 
-NODE::NODE(double number, double x, double y){
+NODE::NODE(bool ifVisited, double x, double y){
 
-    num = number;
+    visited = ifVisited;
     xcor = x;
     ycor = y;   
     
 }
 
 
-void NODE::newNode(double num, double x, double y){
+void NODE::newNode(bool ifVisited, double x, double y){
     
-    NODE temp(num, x, y);
+    NODE temp(ifVisited, x, y);   
     
+    cities[index] = temp;
     
+    index++;
     
 }
 
@@ -61,14 +63,14 @@ void NODE::newNode(double num, double x, double y){
  * running program if possible 
  * @param filename
  */
-int read(string filename){
+int read(string filename, NODE tmp){
+    
   
     string PATH = "/home/nate/Documents/"+filename+".txt";
     cout << "Path: " << PATH << "\n";
     
     
     ifstream tspFile;
-    //myFile.open("C:/home/nate/documents/test.txt");
     tspFile.open(PATH.c_str());
     
     if(tspFile.is_open())
@@ -83,13 +85,10 @@ int read(string filename){
     
     //Get Dimension
     while(getline(tspFile, line) && (!dimFound)){
-        //cout << line << "\n";
         found = line.find("DIMENSION");
         
         if(found != string::npos){
             dimFound = true;
-            //cout << line << "\n";     //for debugging purposes 
-            //cout << line.substr(11) << "\n";
             dimension = atoi(line.substr(11).c_str());
         }        
         
@@ -97,14 +96,19 @@ int read(string filename){
     
     //Get nodes
     bool alreadyFound = false, start_node_gather = false, all_nodes_fnd = false;
-    int foundNodeSec, count = 0;
+    int foundNodeSec;
+    double saveX, saveY;
+    bool save_x_cor, save_y_cor;
+    //NODE temp;  //for some reason it didn't like this
     
     while(getline(tspFile, line) && !all_nodes_fnd){ 
         
         char * curLine = (char *)line.c_str();
         
+        //Letting us know that we can start collecting data points
         if(start_node_gather){
-            char * node = strtok(curLine, " \t");            
+            char * node = strtok(curLine, " \t");    
+            int count = 0;
             
             while(node != NULL){
                 
@@ -112,19 +116,20 @@ int read(string filename){
                     all_nodes_fnd = true;
                     break;
                 }
+                                
+                //Save X or Y cor based on where we are in the line
+                (count == 1) ? saveX = atof(node) : (count == 2) ? saveY = atof(node) : count = count;
                 
-                //Save node #
-                //cout << "NODE: " <<node ;
                 node = strtok(NULL, " ");
                 
-                //Save X coordinate
-                //cout << " X: " << node;
-                node = strtok(NULL, " ");
+                count++;
                 
-                //Save Y coordinate
-                //cout << " Y: " << node << "\n";
-                node = strtok(NULL, " ");
+                
+                
+                
             }
+            
+            tmp.newNode(false, saveX, saveY);            
         }
         
         if(!alreadyFound) {
@@ -139,12 +144,12 @@ int read(string filename){
         
     
     }
-        
+      
     cout << "Dimension: " << dimension << endl;
     
     tspFile.close();
     
-    return dimension; 
+    return dimension;
     
 }
 
@@ -156,10 +161,13 @@ int read(string filename){
  * @param argv
  * @return 
  */
-double TSP_brute(NODE *cities[]){
+double TSP_brute(NODE arg){
     
+    //
+    for(int i = 0; i < arg.num_cities; i++){
+        printf("Node (X,Y): (%f, %f)\n", arg.cities[i].xcor, arg.cities[i].ycor);
+    }
     
-
 }
 
 /*
@@ -169,18 +177,24 @@ int main(int argc, char** argv) {
 
     string filename = "";
     
-    NODE map;
+    NODE mapOf;
+    mapOf.index = 0;
     
     cout << "Please enter a file name from TSPLIB to test (e.g. a280):  ";
     cin >> filename;
     
     //Initializing array of nodes
-    map.num_cities =     read(filename); 
+    //mapOf.num_cities =     read(filename, mapOf);      
+    mapOf.num_cities = read(filename, mapOf);
+    cout << "Cities found: " << mapOf.num_cities << endl;
     
-    cout << "Cities found: " << map.num_cities << "  "<< sizeof(map.cities);
-   // TSP_brute();
+    TSP_brute(mapOf);
     
- 
+    //cout << "Example: " << mapOf.cities[0].xcor << " " << mapOf.cities[0].ycor <<endl;
+    
+    delete [] mapOf.cities;
+    
+    
     return 0;
 }
 
