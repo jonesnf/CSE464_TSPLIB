@@ -28,17 +28,17 @@ typedef struct node{
 class NODE{
 
 public: 
-    int num_cities;
-    double xcor, ycor;
+    int num_cities, node_num;
+    double xcor, ycor, total_weight;
     bool visited;
-    NODE *cities = new NODE[num_cities];
+    NODE **cities = new NODE*[num_cities];
     //node *next;
     int index;    //keeping an index for cities array
        
 public:
     NODE();
-    NODE(bool ifVisited, double x, double y);
-    void newNode(bool ifVisited, double x, double y);
+    NODE(bool ifVisited, int num, double x, double y);
+    void newNode(bool ifVisited, int num, double x, double y);
     double TSP_brute(NODE args);
 
 };
