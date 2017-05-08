@@ -5,7 +5,7 @@
  */
 
 /* 
- * File:   main.cpp
+ * File:   main_brute.cpp
  * Author: nate
  *
  * Created on April 15, 2017, 5:04 PM
@@ -18,6 +18,7 @@
 #include <fstream>
 #include <math.h>
 #include <algorithm>
+#include <time.h>
 #include "node_brute.h"
 
 
@@ -205,7 +206,7 @@ double TSP_brute(){
         
     }while(std::next_permutation(array, array+dimension));
     
-    cout << minDistance << endl;
+    cout << "Tour length: "<< minDistance << endl;
     
     delete [] array;
  
@@ -219,13 +220,19 @@ int main(int argc, char** argv) {
 
     string filename = "";   
    
+    clock_t t1, t2;
     
     cout << "Please enter a file name from TSPLIB to test (e.g. a280):  ";
     cin >> filename;
     
+    t1 = clock();
     dimension = read(filename);
     TSP_brute();
+    t2 = clock();
     
+    float diff((float)t2 - (float)t1);
+    float seconds = diff / CLOCKS_PER_SEC;
+    cout << "Runtime: "<< seconds << endl;
     
     return 0;
 }

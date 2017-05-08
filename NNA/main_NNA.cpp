@@ -18,6 +18,7 @@
 #include <fstream>
 #include <math.h>
 #include <algorithm>
+#include <time.h>
 #include "node_NNA.h"
 
 
@@ -170,7 +171,7 @@ double NNA(){
     node **array = new node*[dimension];
     
     while(tmp->neighbor != NULL){
-        printf("Node %d (x,y): (%f, %f)\n", tmp->num, tmp->xcor, tmp->ycor);
+        //printf("Node %d (x,y): (%f, %f)\n", tmp->num, tmp->xcor, tmp->ycor);
          
         array[index] =  tmp;
         index++;
@@ -182,39 +183,45 @@ double NNA(){
     int i = 0, j, nodes_left = dimension - 1;
     double minDistance = 100000000000000;
     double tour_length = 0;
+    int nearest_index = 0;
+    array[0]->visited = true;
 
     while(i != -1){
         
         double distance = 0;
+        minDistance = 100000000000000000;       //resetting our minDistance
         
-        for(j = 0; j < nodes_left; j++){
+        for(j = 0; j < dimension; j++){
           
         
-             if(!(array[j]->visited)){
+             if(!(array[j]->visited) && i != j ){
                     distance = CalculateDistance(array[i], array[j]);
             
-                 if(distance < minDistance && (distance != 0)){
-                     array[j]->visited = true;
+                 if(distance < minDistance && (distance != 0)) {
+                     
                      minDistance = distance;
+                     nearest_index = j;
                    }
             
             }
             
         }
+        
+        array[nearest_index]->visited = true;
         nodes_left--;
-        i = j; 
+        i = nearest_index; 
         tour_length += minDistance;
         
         if(nodes_left == 0){
             
-            distance = CalculateDistance(array[j], array[0]);
+           distance = CalculateDistance(array[nearest_index], array[0]);
             tour_length += distance;
             i = -1;
         }
     
     }
   
-    cout << tour_length << endl;
+    cout << "Tour Length: " << tour_length << endl;
     
     delete [] array;
  
@@ -227,14 +234,19 @@ double NNA(){
 int main(int argc, char** argv) {
 
     string filename = "";   
-   
+    clock_t t1, t2;
     
+    t1 = clock();
     cout << "Please enter a file name from TSPLIB to test (e.g. a280):  ";
     cin >> filename;
     
     dimension = read(filename);
     NNA();
     
+    t2 = clock();
+    float diff((float)t2 - (float)t1);
+    float seconds = diff / CLOCKS_PER_SEC;
+    cout << "Runtime: " << seconds;
     
     return 0;
 }
